@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Syne:wght@400..800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-base: #0E0F12;
+  --bg-card: #161820;
+  --bg-elevated: #1E2130;
+  --bg-hover: #252840;
+  --bg-active: #2E3250;
+  
+  --accent-primary: #C2542A;
+  --accent-primary-light: #E8784E;
+  --accent-primary-lighter: #F5A882;
+  
+  --accent-secondary: #2E8060;
+  --accent-secondary-light: #4DB88A;
+  --accent-secondary-lighter: #8DDBB8;
+  
+  --accent-tertiary: #2E68B0;
+  --accent-tertiary-light: #5A9AD8;
+  --accent-tertiary-lighter: #9CC4EE;
+  
+  --accent-highlight: #C8A800;
+  --accent-highlight-light: #E8CC20;
+  --accent-highlight-lighter: #F5E060;
+  
+  --text-primary: #F0EDE8;
+  --text-secondary: #A8A4A0;
+  --text-muted: #6A6662;
+  --border-default: #2E3250;
+  
+  --emotion-calm: #5A9AD8;
+  --emotion-happy: #E8784E;
+  --emotion-sad: #5A9AD8;
+  --emotion-angry: #D04040;
+  --emotion-fearful: #9858C8;
+  --emotion-surprise: #4DB88A;
+  --emotion-disgust: #7A6A20;
+
+  --current-emotion-color: var(--emotion-calm);
+}
+
+body {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: 'DM Sans', sans-serif;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Custom scrollbar to match the dark theme */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-base);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--bg-elevated);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--bg-hover);
+}
