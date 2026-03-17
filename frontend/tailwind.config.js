@@ -40,13 +40,12 @@ export default {
         
         'border-default': 'var(--border-default)',
         
-        'emotion-calm': 'var(--emotion-calm)',
-        'emotion-happy': 'var(--emotion-happy)',
-        'emotion-sad': 'var(--emotion-sad)',
         'emotion-angry': 'var(--emotion-angry)',
         'emotion-fearful': 'var(--emotion-fearful)',
-        'emotion-surprise': 'var(--emotion-surprise)',
-        'emotion-disgust': 'var(--emotion-disgust)',
+        'emotion-happy': 'var(--emotion-happy)',
+        'emotion-neutral': 'var(--emotion-neutral)',
+        'emotion-sad': 'var(--emotion-sad)',
+        'emotion-surprised': 'var(--emotion-surprised)',
       }
     },
   },

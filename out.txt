@@ -1,0 +1,125 @@
+python : 2026-03-17 
+23:52:00.473030: I tens
+orflow/core/util/port.c
+c:153] oneDNN custom 
+operations are on. You 
+may see slightly 
+different numerical 
+results due to 
+floating-point 
+round-off errors from 
+different computation 
+orders. To turn them 
+off, set the 
+environment variable `T
+F_ENABLE_ONEDNN_OPTS=0`
+.
+At line:1 char:1
++ python test_load.py 
+> test_load.log 2>&1
++ ~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: (2026-03-17 23   
+ :5...ONEDNN_OPTS=0    
+`.:String) [], Rem    
+oteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+2026-03-17 
+23:52:02.997859: I tens
+orflow/core/util/port.c
+c:153] oneDNN custom 
+operations are on. You 
+may see slightly 
+different numerical 
+results due to 
+floating-point 
+round-off errors from 
+different computation 
+orders. To turn them 
+off, set the 
+environment variable `T
+F_ENABLE_ONEDNN_OPTS=0`
+.
+C:\Users\HP\AppData\Loc
+al\Packages\PythonSoftw
+areFoundation.Python.3.
+11_qbz5n2kfra8p0\LocalC
+ache\local-packages\Pyt
+hon311\site-packages\ke
+ras\src\layers\core\den
+se.py:87: UserWarning: 
+Do not pass an `input_s
+hape`/`input_dim` 
+argument to a layer. 
+When using Sequential 
+models, prefer using 
+an `Input(shape)` 
+object as the first 
+layer in the model 
+instead.
+  super().__init__(acti
+vity_regularizer=activi
+ty_regularizer, 
+**kwargs)
+2026-03-17 
+23:52:11.171474: I tens
+orflow/core/platform/cp
+u_feature_guard.cc:210]
+ This TensorFlow 
+binary is optimized to 
+use available CPU 
+instructions in 
+performance-critical 
+operations.
+To enable the 
+following 
+instructions: SSE3 
+SSE4.1 SSE4.2 AVX AVX2 
+FMA, in other 
+operations, rebuild 
+TensorFlow with the 
+appropriate compiler 
+flags.
+C:\Users\HP\AppData\Loc
+al\Packages\PythonSoftw
+areFoundation.Python.3.
+11_qbz5n2kfra8p0\LocalC
+ache\local-packages\Pyt
+hon311\site-packages\ke
+ras\src\optimizers\base
+_optimizer.py:86: 
+UserWarning: Argument 
+`decay` is no longer 
+supported and will be 
+ignored.
+  warnings.warn(
+WARNING:absl:Compiled 
+the loaded model, but 
+the compiled metrics 
+have yet to be built. `
+model.compile_metrics` 
+will be empty until 
+you train or evaluate 
+the model.
+WARNING:absl:Error in 
+loading the saved 
+optimizer state. As a 
+result, your model is 
+starting with a 
+freshly initialized 
+optimizer.
+Scaler Mean Shape: (220,)
+Scaler Mean (first 5): [-528.59606687   55.89688256   -9.61687706    7.80628455   -0.97930192]
+Scaler Scale (first 5): [109.72545964  18.42960423  15.24489623   8.99192245  10.30045304]
+Extracted Features (first 5): [-14.8441017    7.3354472    8.21878651   4.46937113  -0.67658885]
+Scaled Features (first 5): [ 4.68215824 -2.63496898  1.16994326 -0.37110122  0.02938833]
+
+[1m1/1[0m [32m====================[0m[37m[0m [1m0s[0m 152ms/step
+[1m1/1[0m [32m====================[0m[37m[0m [1m0s[0m 185ms/step
+Predictions: [[9.9549794e-01 3.7919758e-03 6.9912692e-04 7.6989259e-08 1.0692254e-05
+  2.5222846e-07]]

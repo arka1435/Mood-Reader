@@ -22,26 +22,24 @@ ChartJS.register(
 );
 
 const emotionColors = {
-  calm: '#5A9AD8',
-  happy: '#E8784E',
-  sad: '#5A9AD8',
   angry: '#D04040',
   fearful: '#9858C8',
-  surprise: '#4DB88A',
-  disgust: '#7A6A20'
+  happy: '#E8784E',
+  neutral: '#888580',
+  sad: '#5A9AD8',
+  surprised: '#4DB88A'
 };
 
 const empathyMessages = {
-  calm: "You sound grounded and composed. That's a good place to be.",
-  happy: "There's warmth and energy in your voice. Keep it going.",
-  sad: "It sounds like something is weighing on you. Take it at your own pace.",
   angry: "Tension is coming through clearly. A few slow breaths can reset the baseline.",
   fearful: "Anxiety is present in your voice. You're not alone in feeling this way.",
-  surprise: "Something caught you off guard. Quite a reaction.",
-  disgust: "Strong aversion detected. It's okay to feel strongly about things."
+  happy: "There's warmth and energy in your voice. Keep it going.",
+  neutral: "You sound composed and level. A calm baseline to work from.",
+  sad: "It sounds like something is weighing on you. Take it at your own pace.",
+  surprised: "Something caught you off guard. Quite a reaction."
 };
 
-const emotionLabels = ["calm", "happy", "sad", "angry", "fearful", "surprise", "disgust"];
+const emotionLabels = ["angry", "fearful", "happy", "neutral", "sad", "surprised"];
 
 export default function ResultsPage() {
   const location = useLocation();
@@ -54,7 +52,7 @@ export default function ResultsPage() {
   }
 
   const { dominant_emotion, confidence, all_scores, mock } = location.state;
-  const currentEmotionColor = emotionColors[dominant_emotion] || '#5A9AD8';
+  const currentEmotionColor = emotionColors[dominant_emotion] || '#888580';
   
   useEffect(() => {
     // Determine color and apply to root
