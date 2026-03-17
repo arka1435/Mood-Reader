@@ -14,3 +14,9 @@ dist/
 # OS
 .DS_Store
 Thumbs.db
+*.keras
+*.h5
+*.pkl
+dataset/
+AudioWAV/
+__pycache__/
