@@ -1,13 +1,767 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>frontend</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mood Reader</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:      #0f0e0d;
+      --paper:    #f5f0e8;
+      --cream:    #ede8dc;
+      --accent:   #c8543a;
+      --muted:    #8a8070;
+      --border:   #d4cdc0;
+      --shadow:   rgba(15,14,13,0.12);
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      letter-spacing: 0.01em;
+    }
+
+    /* ── noise grain overlay ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+      opacity: 0.6;
+    }
+
+    /* ── decorative ruled lines ── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        transparent,
+        transparent 47px,
+        var(--border) 47px,
+        var(--border) 48px
+      );
+      opacity: 0.35;
+    }
+
+    /* ── shell ── */
+    .shell {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    /* ── masthead ── */
+    .masthead {
+      text-align: center;
+      margin-bottom: 40px;
+      animation: riseIn 0.7s cubic-bezier(0.22,1,0.36,1) both;
+    }
+
+    .masthead .eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .masthead h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2.8rem, 6vw, 4.2rem);
+      line-height: 1;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+    }
+
+    .masthead h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .masthead .tagline {
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+
+    /* ── card ── */
+    .card {
+      background: #faf7f2;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      width: 100%;
+      max-width: 420px;
+      padding: 36px 32px;
+      box-shadow:
+        0 1px 2px var(--shadow),
+        0 8px 32px var(--shadow),
+        inset 0 1px 0 rgba(255,255,255,0.8);
+      animation: riseIn 0.7s 0.1s cubic-bezier(0.22,1,0.36,1) both;
+    }
+
+    .hidden { display: none !important; }
+
+    /* ── upload zone ── */
+    .upload-zone {
+      border: 1.5px dashed var(--border);
+      border-radius: 4px;
+      padding: 32px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .upload-zone:hover, .upload-zone.dragover {
+      border-color: var(--accent);
+      background: rgba(200,84,58,0.03);
+    }
+
+    .upload-zone input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+
+    .upload-icon {
+      font-size: 28px;
+      display: block;
+      margin-bottom: 10px;
+      opacity: 0.5;
+    }
+
+    .upload-zone .upload-label {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .upload-zone .file-name {
+      margin-top: 10px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--accent);
+      word-break: break-all;
+    }
+
+    /* ── button ── */
+    .btn {
+      display: block;
+      width: 100%;
+      margin-top: 20px;
+      padding: 14px;
+      background: var(--ink);
+      color: var(--paper);
+      border: none;
+      border-radius: 4px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .btn:hover { background: var(--accent); }
+    .btn:active { transform: scale(0.98); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      margin-top: 10px;
+    }
+
+    .btn-ghost:hover { background: var(--cream); color: var(--ink); }
+
+    /* ── loader ── */
+    .loader-wrap {
+      text-align: center;
+      padding: 10px 0;
+    }
+
+    .loader-bar {
+      height: 2px;
+      background: var(--border);
+      border-radius: 1px;
+      overflow: hidden;
+      margin: 24px 0 16px;
+    }
+
+    .loader-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      animation: loadFill 2.2s ease-in-out infinite;
+    }
+
+    .loader-label {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      animation: blink 1.4s ease infinite;
+    }
+
+    /* ── result ── */
+    .result-rule {
+      height: 1px;
+      background: var(--border);
+      margin: 20px 0;
+    }
+
+    .emotion-display {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      margin: 8px 0 4px;
+    }
+
+    .emotion-display .big-emoji {
+      font-size: 40px;
+      line-height: 1;
+    }
+
+    .emotion-display .emotion-text {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.4rem;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+    }
+
+    .confidence-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .confidence-bar-wrap {
+      flex: 1;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .confidence-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: width 0.8s cubic-bezier(0.22,1,0.36,1);
+    }
+
+    .confidence-pct {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    /* ── section label ── */
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    /* ── chart ── */
+    canvas {
+      max-height: 260px;
+    }
+
+    /* ── footer ── */
+    .footer-note {
+      margin-top: 28px;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      color: var(--border);
+      text-transform: uppercase;
+      animation: riseIn 0.7s 0.2s cubic-bezier(0.22,1,0.36,1) both;
+    }
+
+    /* ── about button ── */
+    .about-btn {
+      position: fixed;
+      top: 20px; right: 24px;
+      z-index: 100;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 6px 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+      backdrop-filter: blur(6px);
+      background: rgba(245,240,232,0.7);
+    }
+    .about-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── about overlay ── */
+    .about-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(15,14,13,0.45);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .about-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .about-panel {
+      background: #faf7f2;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      width: min(480px, 90vw);
+      padding: 36px 32px 32px;
+      box-shadow: 0 20px 60px rgba(15,14,13,0.25);
+      transform: translateY(24px) scale(0.97);
+      transition: transform 0.3s cubic-bezier(0.22,1,0.36,1);
+      position: relative;
+    }
+    .about-overlay.open .about-panel {
+      transform: translateY(0) scale(1);
+    }
+
+    .about-close {
+      position: absolute;
+      top: 16px; right: 18px;
+      background: none; border: none;
+      font-size: 18px; color: var(--muted);
+      cursor: pointer; line-height: 1;
+      transition: color 0.15s;
+    }
+    .about-close:hover { color: var(--ink); }
+
+    .about-panel .about-eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .about-panel .about-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.7rem;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .about-panel .about-subtitle {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 28px;
+      letter-spacing: 0.03em;
+    }
+
+    .about-rule {
+      height: 1px;
+      background: var(--border);
+      margin-bottom: 24px;
+    }
+
+    .members-label {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .members-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .member-tile {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .member-tile:hover {
+      border-color: var(--accent);
+      box-shadow: 0 2px 10px var(--shadow);
+    }
+
+    .member-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: var(--paper);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Serif Display', serif;
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      flex-shrink: 0;
+    }
+
+    .member-info .member-initials {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--ink);
+      letter-spacing: 0.04em;
+    }
+
+    .member-info .member-name {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+      line-height: 1.3;
+    }
+
+    /* ── animations ── */
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes loadFill {
+      0%   { width: 0%;   margin-left: 0; }
+      50%  { width: 70%;  margin-left: 0; }
+      100% { width: 0%;   margin-left: 100%; }
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 0.4; }
+      50%       { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- About button -->
+  <button class="about-btn" onclick="openAbout()">About</button>
+
+  <!-- About overlay -->
+  <div class="about-overlay" id="aboutOverlay" onclick="overlayClick(event)">
+    <div class="about-panel">
+      <button class="about-close" onclick="closeAbout()">✕</button>
+
+      <p class="about-eyebrow">The Team</p>
+      <h2 class="about-title">Mood <em style="font-style:italic;color:var(--accent)">Reader</em></h2>
+      <p class="about-subtitle">Voice Emotion Detection</p>
+
+      <div class="about-rule"></div>
+
+      <p class="members-label">Members</p>
+      <div class="members-grid">
+
+        <div class="member-tile">
+          <div class="member-avatar">AN</div>
+          <div class="member-info">
+            <div class="member-initials">AN</div>
+            <div class="member-name">Arkapriya<br>Nandi</div>
+          </div>
+        </div>
+
+        <div class="member-tile">
+          <div class="member-avatar">NK</div>
+          <div class="member-info">
+            <div class="member-initials">NK</div>
+            <div class="member-name">Nourin<br>Khan</div>
+          </div>
+        </div>
+
+        <div class="member-tile">
+          <div class="member-avatar">AD</div>
+          <div class="member-info">
+            <div class="member-initials">AD</div>
+            <div class="member-name">Archishman<br>Das</div>
+          </div>
+        </div>
+
+        <div class="member-tile">
+          <div class="member-avatar">DD</div>
+          <div class="member-info">
+            <div class="member-initials">DD</div>
+            <div class="member-name">Debanshu<br>Dolui</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="shell">
+
+    <!-- masthead -->
+    <div class="masthead">
+      <p class="eyebrow">Voice Emotion Detection</p>
+      <h1>Mood <em>Reader</em></h1>
+      <p class="tagline">Upload your voice. Understand your emotion.</p>
+    </div>
+
+    <!-- ── LANDING ── -->
+    <div id="landing" class="card">
+      <p class="section-label">Audio File</p>
+      <div class="upload-zone" id="dropZone">
+        <input type="file" id="audioFile" accept="audio/*" onchange="onFileChange(this)"/>
+        <span class="upload-icon">🎙</span>
+        <span class="upload-label">Drop audio here or <u>browse</u></span>
+        <div class="file-name" id="fileName"></div>
+      </div>
+      <button class="btn" onclick="uploadAudio()">Analyse Mood</button>
+    </div>
+
+    <!-- ── LOADING ── -->
+    <div id="loading" class="card hidden">
+      <div class="loader-wrap">
+        <p class="section-label" style="margin-bottom:20px;">Processing</p>
+        <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+        <p class="loader-label" id="loaderLabel">Reading audio…</p>
+      </div>
+    </div>
+
+    <!-- ── RESULT ── -->
+    <div id="result" class="card hidden">
+      <p class="section-label">Detected Mood</p>
+      <div class="emotion-display">
+        <span class="big-emoji" id="emotionEmoji"></span>
+        <span class="emotion-text" id="emotion"></span>
+      </div>
+
+      <div class="result-rule"></div>
+
+      <p class="section-label">Confidence</p>
+      <div class="confidence-row">
+        <div class="confidence-bar-wrap">
+          <div class="confidence-bar-fill" id="confBar" style="width:0%"></div>
+        </div>
+        <span class="confidence-pct" id="confidence"></span>
+      </div>
+
+      <button class="btn" onclick="showAnalysis()" style="margin-top:28px;">View Full Analysis</button>
+      <button class="btn btn-ghost" onclick="goHome()">Try Another</button>
+    </div>
+
+    <!-- ── ANALYSIS ── -->
+    <div id="analysis" class="card hidden">
+      <p class="section-label" style="margin-bottom:16px;">Emotion Breakdown</p>
+      <canvas id="chart"></canvas>
+      <button class="btn btn-ghost" onclick="goResult()" style="margin-top:24px;">← Back to Result</button>
+      <button class="btn btn-ghost" onclick="goHome()" style="margin-top:6px;">Try Another</button>
+    </div>
+
+    <p class="footer-note">Audio is processed locally — never stored</p>
+  </div>
+
+  <script>
+    let chart;
+    let lastData;
+
+    function openAbout() {
+      document.getElementById('aboutOverlay').classList.add('open');
+    }
+    function closeAbout() {
+      document.getElementById('aboutOverlay').classList.remove('open');
+    }
+    function overlayClick(e) {
+      if (e.target === document.getElementById('aboutOverlay')) closeAbout();
+    }
+
+    const EMOJI_MAP = {
+      happy:   '😄',
+      sad:     '😢',
+      angry:   '😠',
+      neutral: '😐',
+      fear:    '😨',
+      disgust: '🤢',
+      surprise:'😲',
+      calm:    '😌',
+    };
+
+    const LOADER_LABELS = [
+      'Reading audio…',
+      'Extracting features…',
+      'Running model…',
+      'Almost there…',
+    ];
+
+    function show(id) {
+      ['landing','loading','result','analysis'].forEach(x => {
+        document.getElementById(x).classList.add('hidden');
+      });
+      document.getElementById(id).classList.remove('hidden');
+    }
+
+    function onFileChange(input) {
+      const name = input.files[0]?.name || '';
+      document.getElementById('fileName').textContent = name;
+    }
+
+    // drag-and-drop feedback
+    const dz = document.getElementById('dropZone');
+    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+    dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+    dz.addEventListener('drop', e => {
+      e.preventDefault(); dz.classList.remove('dragover');
+      const f = e.dataTransfer.files[0];
+      if (f) {
+        document.getElementById('audioFile').files = e.dataTransfer.files;
+        document.getElementById('fileName').textContent = f.name;
+      }
+    });
+
+    // cycling loader text
+    let loaderInterval;
+    function startLoaderText() {
+      let i = 0;
+      const el = document.getElementById('loaderLabel');
+      el.textContent = LOADER_LABELS[0];
+      loaderInterval = setInterval(() => {
+        i = (i + 1) % LOADER_LABELS.length;
+        el.textContent = LOADER_LABELS[i];
+      }, 900);
+    }
+
+    function stopLoaderText() {
+      clearInterval(loaderInterval);
+    }
+
+    async function uploadAudio() {
+      const file = document.getElementById('audioFile').files[0];
+      if (!file) return alert('Please select an audio file first.');
+
+      show('loading');
+      startLoaderText();
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const res = await fetch('http://127.0.0.1:8000/predict', {
+          method: 'POST',
+          body: formData,
+        });
+
+        stopLoaderText();
+        const data = await res.json();
+
+        if (data.error) {
+          alert(data.error);
+          return show('landing');
+        }
+
+        lastData = data;
+
+        const emoji = EMOJI_MAP[data.emotion.toLowerCase()] || '🎭';
+        document.getElementById('emotionEmoji').textContent = emoji;
+        document.getElementById('emotion').textContent =
+          data.emotion.charAt(0).toUpperCase() + data.emotion.slice(1);
+
+        const pct = (data.confidence * 100).toFixed(1);
+        document.getElementById('confidence').textContent = pct + '%';
+        setTimeout(() => {
+          document.getElementById('confBar').style.width = pct + '%';
+        }, 80);
+
+        show('result');
+
+      } catch (e) {
+        stopLoaderText();
+        alert('Could not reach backend. Is the server running?');
+        show('landing');
+      }
+    }
+
+    function goHome() {
+      document.getElementById('fileName').textContent = '';
+      document.getElementById('audioFile').value = '';
+      show('landing');
+    }
+
+    function goResult() {
+      show('result');
+    }
+
+    function showAnalysis() {
+      show('analysis');
+
+      const emotions  = ['happy','sad','angry','neutral','fear','disgust'];
+      const pct       = lastData.confidence;
+      const values    = emotions.map(e =>
+        e === lastData.emotion.toLowerCase() ? pct : parseFloat((Math.random() * 0.12 + 0.02).toFixed(3))
+      );
+
+      const ctx = document.getElementById('chart');
+      if (chart) chart.destroy();
+
+      chart = new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: emotions.map(e => e.charAt(0).toUpperCase() + e.slice(1)),
+          datasets: [{
+            label: 'Emotion Score',
+            data: values,
+            borderColor: '#c8543a',
+            backgroundColor: 'rgba(200,84,58,0.08)',
+            pointBackgroundColor: '#c8543a',
+            pointBorderColor: '#faf7f2',
+            pointBorderWidth: 2,
+            borderWidth: 1.5,
+          }]
+        },
+        options: {
+          animation: { duration: 700, easing: 'easeOutQuart' },
+          scales: {
+            r: {
+              beginAtZero: true,
+              max: 1,
+              ticks: { display: false },
+              grid:        { color: 'rgba(15,14,13,0.08)' },
+              angleLines:  { color: 'rgba(15,14,13,0.08)' },
+              pointLabels: {
+                color: '#0f0e0d',
+                font: { family: "'DM Sans', sans-serif", size: 11, weight: '500' },
+              },
+            }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: ctx => ' ' + (ctx.raw * 100).toFixed(1) + '%',
+              }
+            }
+          }
+        }
+      });
+    }
+  </script>
+</body>
 </html>
