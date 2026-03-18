@@ -13,7 +13,7 @@ export default function AboutPage() {
       <section>
         <h2 className="font-display font-semibold text-[32px] text-text-primary mb-4">What is Mood Reader</h2>
         <p className="font-body text-[16px] text-text-secondary leading-[1.7]">
-          Mood Reader is an advanced real-time speech emotion recognition tool. It analyzes the acoustic properties of your voice to map your expressed state to one of seven distinct emotional categories. Whether for self-reflection, accessibility features, or conversational analytics, Mood Reader reveals the feelings behind the words.
+          Mood Reader is an advanced real-time speech emotion recognition tool. It analyzes the acoustic properties of your voice to map your expressed state to one of six distinct emotional categories. Whether for self-reflection, accessibility features, or conversational analytics, Mood Reader reveals the feelings behind the words.
         </p>
       </section>
 
@@ -41,8 +41,8 @@ export default function AboutPage() {
             <ul className="font-body text-[16px] text-text-secondary leading-[1.7] space-y-2">
               <li><strong className="text-text-primary font-medium">Architecture:</strong> Convolutional Neural Network (CNN)</li>
               <li><strong className="text-text-primary font-medium">Input:</strong> Mel Spectrogram, 128 mel bands × 128 time frames</li>
-              <li><strong className="text-text-primary font-medium">Output:</strong> 7-class softmax probabilities</li>
-              <li><strong className="text-text-primary font-medium">Classes:</strong> Calm · Happy · Sad · Angry · Fearful · Surprise · Disgust</li>
+              <li><strong className="text-text-primary font-medium">Output:</strong> 6-class softmax probabilities</li>
+              <li><strong className="text-text-primary font-medium">Classes:</strong> Angry · Disgust · Fear · Happy · Neutral · Sad</li>
               <li><strong className="text-text-primary font-medium">Training dataset:</strong> RAVDESS, 1440 audio files, 24 professional actors, 22050Hz sample rate</li>
             </ul>
           </div>

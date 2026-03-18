@@ -1,0 +1,47 @@
+﻿python : 2026-03-18 
+19:58:05.288180: I tenso
+rflow/core/util/port.cc:
+153] oneDNN custom 
+operations are on. You 
+may see slightly 
+different numerical 
+results due to 
+floating-point 
+round-off errors from 
+different computation 
+orders. To turn them 
+off, set the 
+environment variable `TF
+_ENABLE_ONEDNN_OPTS=0`.
+At line:1 char:1
++ python diagnostic.py 
+> diagnostic_output_new.
+txt 2>&1
++ ~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~
+    + CategoryInfo      
+        : NotSpecifi    
+ed: (2026-03-18 19    
+:5...ONEDNN_OPTS=0    
+`.:String) [], Rem    
+oteException
+    + FullyQualifiedEr  
+  rorId : NativeComm    
+andError
+ 
+2026-03-18 
+19:58:09.067593: I tenso
+rflow/core/util/port.cc:
+153] oneDNN custom 
+operations are on. You 
+may see slightly 
+different numerical 
+results due to 
+floating-point 
+round-off errors from 
+different computation 
+orders. To turn them 
+off, set the 
+environment variable `TF
+_ENABLE_ONEDNN_OPTS=0`.

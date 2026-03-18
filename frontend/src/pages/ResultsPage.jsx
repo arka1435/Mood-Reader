@@ -23,23 +23,23 @@ ChartJS.register(
 
 const emotionColors = {
   angry: '#D04040',
-  fearful: '#9858C8',
+  disgust: '#4DB88A',
+  fear: '#9858C8',
   happy: '#E8784E',
   neutral: '#888580',
-  sad: '#5A9AD8',
-  surprised: '#4DB88A'
+  sad: '#5A9AD8'
 };
 
 const empathyMessages = {
   angry: "Tension is coming through clearly. A few slow breaths can reset the baseline.",
-  fearful: "Anxiety is present in your voice. You're not alone in feeling this way.",
+  disgust: "Something seems off-putting to you. Quite a reaction.",
+  fear: "Anxiety is present in your voice. You're not alone in feeling this way.",
   happy: "There's warmth and energy in your voice. Keep it going.",
   neutral: "You sound composed and level. A calm baseline to work from.",
-  sad: "It sounds like something is weighing on you. Take it at your own pace.",
-  surprised: "Something caught you off guard. Quite a reaction."
+  sad: "It sounds like something is weighing on you. Take it at your own pace."
 };
 
-const emotionLabels = ["angry", "fearful", "happy", "neutral", "sad", "surprised"];
+const emotionLabels = ["angry", "disgust", "fear", "happy", "neutral", "sad"];
 
 export default function ResultsPage() {
   const location = useLocation();
@@ -60,11 +60,9 @@ export default function ResultsPage() {
     document.documentElement.style.transition = 'all 500ms ease';
 
     // Timeline logic
-    const stored = sessionStorage.getItem('moodreader_timeline');
     let parsed = [];
-    if (stored) {
-      try { parsed = JSON.parse(stored); } catch(e) {}
-    }
+    // Timeline is now strictly session-based and does not persist across refreshes
+    // previously retrieved from sessionStorage
     
     // Create new entry
     const newEntry = {
@@ -75,16 +73,15 @@ export default function ResultsPage() {
       color: currentEmotionColor
     };
     
-    const updated = [newEntry, ...parsed];
+    const updated = [newEntry, ...timeline]; // append to current session state
     setTimeline(updated);
-    sessionStorage.setItem('moodreader_timeline', JSON.stringify(updated));
 
     // Cleanup root style on unmount
     return () => {
       document.documentElement.style.removeProperty('--current-emotion-color');
       document.documentElement.style.transition = '';
     };
-  }, [dominant_emotion, currentEmotionColor]);
+  }, [dominant_emotion, currentEmotionColor, location.state.analysis_id]);
 
   // Chart Logic
   const dataScores = emotionLabels.map(label => all_scores[label] || 0);
@@ -151,8 +148,6 @@ export default function ResultsPage() {
   };
 
   const handleClear = () => {
-    sessionStorage.removeItem('moodreader_timeline');
-    setTimeline([timeline[0]]); // Keep just the current one or clear entirely? The prompt says "re-renders empty state". Let's clear completely.
     setTimeline([]);
   };
 

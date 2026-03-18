@@ -86,8 +86,8 @@ export default function LandingPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
           <FeatureCard 
             delay={0.1}
-            title="7 emotions detected"
-            subtext="Calm · Happy · Sad · Angry · Fearful · Surprise · Disgust"
+            title="6 emotions detected"
+            subtext="Angry · Disgust · Fear · Happy · Neutral · Sad"
           />
           <FeatureCard 
             delay={0.2}

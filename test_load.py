@@ -3,7 +3,7 @@ import tensorflow as tf
 import joblib
 
 SCALER = joblib.load(r'd:\Archi_Projects\MoodReader\model_api\weights\scaler.pkl')
-MODEL = tf.keras.models.load_model(r'd:\Archi_Projects\MoodReader\model_api\weights\model.h5')
+MODEL = tf.keras.models.load_model(r'd:\Archi_Projects\MoodReader\model_api\weights\model.keras')
 
 print(f"Scaler Mean Shape: {SCALER.mean_.shape}")
 print(f"Scaler Mean (first 5): {SCALER.mean_[:5]}")

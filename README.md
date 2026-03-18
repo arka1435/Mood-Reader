@@ -9,7 +9,7 @@ This document provides a comprehensive overview of the **Mood Reader** project, 
 - **Real-time Voice Analysis**: Users can record their speech directly from their browser, visualizing the live waveform as they speak.
 - **File Uploads**: Support for uploading pre-recorded audio files in various formats (WAV, MP3, WebM, OGG, M4A).
 - **Client-Side Audio Decoding**: Uses the browser's native Web Audio API to decode inputs into raw PCM WAV, eliminating the need for complex server-side dependency setups (like ffmpeg).
-- **7-Class Emotion Detection**: Detects emotions categorized into: *Calm*, *Happy*, *Sad*, *Angry*, *Fearful*, *Surprise*, and *Disgust*.
+- **6-Class Emotion Detection**: Detects emotions categorized into: *Angry*, *Disgust*, *Fear*, *Happy*, *Neutral*, and *Sad*.
 - **Emotion Timeline (Session History)**: Tracks the user's emotional arc across a session, saving events safely within `sessionStorage`.
 - **Dynamic Theming**: The application dynamically changes colors to match the detected dominant emotion.
 - **Empathy Engine**: Provides tailored empathy messages acknowledging the current detected state.
@@ -48,7 +48,7 @@ The payload (Wav Blob) is bundled into `FormData` under the key `audio_file` and
 - Otherwise, the system defaults to generating mock random scores indicating the Mock state to the frontend in JSON.
 
 ### 7. Results Interpretation
-- The raw neural network softmax outputs are mapped to the 7 emotion labels.
+- The raw neural network softmax outputs are mapped to the 6 emotion labels.
 - The dominant emotion (highest probability) and the probability score itself (confidence) are extracted and returned as a JSON response.
 
 ### 8. UI Rendering (`ResultsPage.jsx`)

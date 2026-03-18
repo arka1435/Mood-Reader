@@ -37,14 +37,16 @@ export default function AnalysePage() {
 
       const formData = new FormData();
       formData.append('audio_file', wavBlob, 'recording.wav');
+      // Cache-busting: ensuring every request has a unique timestamp
+      formData.append('timestamp', Date.now().toString());
 
       // Assuming Vite proxy handles /api
       const response = await axios.post('/api/analyse/voice', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
-      // Navigate to results
-      navigate('/results', { state: response.data });
+      // Navigate to results with a unique analysis ID to ensure fresh rendering
+      navigate('/results', { state: { ...response.data, analysis_id: Date.now() } });
     } catch (err) {
       console.error(err);
       const detailMsg = err.response?.data?.detail;
