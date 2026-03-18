@@ -131,4 +131,5 @@ Upload an audio file and get emotion prediction.
 * 🤖 Improve model accuracy with CNN / LSTM
 ---
 Video Demo Link: https://drive.google.com/file/d/152lv-fuxacC3TzJGVZm2kKMNM7UKWogB/view?usp=sharing
+Presentation and Problem Satement Solution Link: https://drive.google.com/drive/folders/1jL-dJCdqCwklp0SP4QJfFcKu7uMizjbz?usp=sharing
 
