@@ -129,13 +129,6 @@ Upload an audio file and get emotion prediction.
 * 📈 Real-time waveform visualization
 * 🌐 Deploy to cloud (AWS / Render)
 * 🤖 Improve model accuracy with CNN / LSTM
-
----
-
-## 👨‍💻 Author
-
-**Debanshu Dolui**
-
 ---
 
 ## ⭐ If you like this project
