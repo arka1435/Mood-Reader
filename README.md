@@ -130,7 +130,5 @@ Upload an audio file and get emotion prediction.
 * 🌐 Deploy to cloud (AWS / Render)
 * 🤖 Improve model accuracy with CNN / LSTM
 ---
+Video Demo Link: https://drive.google.com/file/d/152lv-fuxacC3TzJGVZm2kKMNM7UKWogB/view?usp=sharing
 
-## ⭐ If you like this project
-
-Give it a ⭐ on GitHub!
